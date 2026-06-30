@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scanner</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#111;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+#reader{
+    width:100%;
+    max-width:500px;
+}
+
+h2{
+    position:absolute;
+    top:20px;
+    width:100%;
+    text-align:center;
+    font-weight:normal;
+}
+</style>
+</head>
+<body>
+
+<h2>Scan a QR Code or Barcode</h2>
+
+<div id="reader"></div>
+
+<script>
+const scanner = new Html5Qrcode("reader");
+
+function success(decodedText) {
+    scanner.stop().then(() => {
+        window.location.href = "/" + encodeURIComponent(decodedText);
+    });
+}
+
+function error() {}
+
+Html5Qrcode.getCameras().then(cameras => {
+    if (cameras && cameras.length) {
+        scanner.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                formatsToSupport: [
+                    Html5QrcodeSupportedFormats.QR_CODE,
+                    Html5QrcodeSupportedFormats.CODE_128,
+                    Html5QrcodeSupportedFormats.CODE_39,
+                    Html5QrcodeSupportedFormats.CODE_93,
+                    Html5QrcodeSupportedFormats.CODABAR,
+                    Html5QrcodeSupportedFormats.EAN_13,
+                    Html5QrcodeSupportedFormats.EAN_8,
+                    Html5QrcodeSupportedFormats.ITF,
+                    Html5QrcodeSupportedFormats.UPC_A,
+                    Html5QrcodeSupportedFormats.UPC_E
+                ]
+            },
+            success,
+            error
+        );
+    }
+}).catch(err => {
+    document.body.innerHTML = "<h2>Unable to access camera.<br>" + err + "</h2>";
+});
+</script>
+
+</body>
+</html>
